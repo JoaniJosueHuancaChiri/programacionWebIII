@@ -50,18 +50,20 @@ app.get('/categorias', async (req, res) => {
 });
 //ejercicio3
 app.get('/categorias/:id', async (req, res) => {
-    const id  = req.params.id;
+    const { id } = req.params;
     try {
         const [categoria] = await pool.query('SELECT * FROM categorias WHERE id = ?', [id]);
+        
+        const [productos] = await pool.query('SELECT * FROM productos WHERE categoria_id = ?', [id]);
         res.status(200).json({
-            categoria: categoria[0]
+            categoria: categoria[0],
+            productos: productos
         });
     } catch (error) {
-        res.status(500).send({ mensaje: 'Error al obtener los datos', error: error.message });
+        res.status(500).send({ mensaje: 'Error al consultar', error: error.message });
     }
 });
 //ejercicio4
-// PATCH /categorias/:id
 app.patch('/categorias/:id', async (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion } = req.body;
